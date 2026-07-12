@@ -266,17 +266,17 @@
   const keys = document.querySelectorAll('button[data-action]');
 
   const state = {
-    previousValue: null,   // number, the accumulated running total
-    currentValue: '0',     // string, what's currently being typed / shown
-    operator: null,        // '+', '−', '×', '÷'
-    waitingForOperand: false, // true right after an operator or equals was pressed
+    previousValue: null,   
+    currentValue: '0',    
+    operator: null,        
+    waitingForOperand: false, 
     isError: false,
-    lastExpressionPart: '' // for display of the "5 + 3" trail above the live number
+    lastExpressionPart: ''
   };
 
   function formatNumber(num) {
     if (!isFinite(num)) return 'Error';
-    // Avoid ugly floating point tails like 0.1 + 0.2
+    
     const rounded = Math.round((num + Number.EPSILON) * 1e10) / 1e10;
     return rounded.toString();
   }
@@ -325,10 +325,10 @@
   function applyOperator(a, op, b) {
     switch (op) {
       case '+': return a + b;
-      case '−': return a - b;
-      case '×': return a * b;
+      case '-': return a - b;
+      case 'x': return a * b;
       case '÷':
-        if (b === 0) return null; // signal divide-by-zero
+        if (b === 0) return null; 
         return a / b;
       default: return b;
     }
@@ -339,7 +339,7 @@
     const inputValue = parseFloat(state.currentValue);
 
     if (state.operator && state.waitingForOperand) {
-      // user changed their mind about the operator right after pressing one
+      
       state.operator = nextOp;
       state.lastExpressionPart = `${formatNumber(state.previousValue)} ${nextOp}`;
       render();
@@ -442,7 +442,7 @@
     });
   });
 
-  // Optional but handy: basic keyboard support layered on top of the same handlers
+  
   window.addEventListener('keydown', (e) => {
     if (e.key >= '0' && e.key <= '9') inputDigit(e.key);
     else if (e.key === '.') inputDecimal();
