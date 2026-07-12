@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desk Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --body-dark: #2b2b26;
+    --body-darker: #201f1b;
+    --panel-edge: #43413a;
+    --display-bg: #16241a;
+    --display-glow: #9ffcae;
+    --display-dim: #4d7a5a;
+    --key-num: #3f3d38;
+    --key-num-hi: #4c4a43;
+    --key-num-text: #f2ede1;
+    --key-op: #c9702e;
+    --key-op-hi: #d98644;
+    --key-op-text: #1a1408;
+    --key-func: #837c6c;
+    --key-func-hi: #948d7c;
+    --key-func-text: #1a1a16;
+    --key-equals: #7a9b6e;
+    --key-equals-hi: #8bad7e;
+    --page-bg: #12110f;
+    --font-display: 'Share Tech Mono', monospace;
+    --font-ui: 'Inter', sans-serif;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:
+      radial-gradient(circle at 50% 0%, #1c1a16 0%, var(--page-bg) 70%);
+    font-family: var(--font-ui);
+    padding: 32px 16px;
+  }
+
+  .machine {
+    width: 320px;
+    background: linear-gradient(160deg, var(--body-dark), var(--body-darker));
+    border-radius: 18px;
+    padding: 20px 18px 26px;
+    box-shadow:
+      0 30px 60px rgba(0,0,0,0.55),
+      inset 0 1px 0 rgba(255,255,255,0.06),
+      inset 0 -2px 4px rgba(0,0,0,0.4);
+    border: 1px solid #1a1913;
+    position: relative;
+  }
+
+  .brand-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 2px 6px 14px;
+  }
+
+  .brand {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #9a9484;
+    font-weight: 600;
+  }
+
+  .brand span { color: var(--key-op); }
+
+  .model {
+    font-size: 10px;
+    color: #6b6558;
+    letter-spacing: 0.08em;
+  }
+
+  .screen-housing {
+    background: var(--panel-edge);
+    border-radius: 10px;
+    padding: 4px;
+    box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
+    margin-bottom: 18px;
+  }
+
+  .screen {
+    background: var(--display-bg);
+    border-radius: 7px;
+    padding: 18px 16px 14px;
+    position: relative;
+    overflow: hidden;
+    min-height: 84px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    box-shadow: inset 0 0 18px rgba(0,0,0,0.6);
+  }
+
+  .screen::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      to bottom,
+      rgba(0,0,0,0.15) 0px,
+      rgba(0,0,0,0.15) 1px,
+      transparent 1px,
+      transparent 3px
+    );
+    pointer-events: none;
+  }
+
+  .screen-expression {
+    font-family: var(--font-display);
+    font-size: 13px;
+    color: var(--display-dim);
+    text-align: right;
+    min-height: 16px;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .screen-result {
+    font-family: var(--font-display);
+    font-size: 34px;
+    color: var(--display-glow);
+    text-align: right;
+    text-shadow: 0 0 10px rgba(159,252,174,0.55), 0 0 2px rgba(159,252,174,0.8);
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .screen-result::-webkit-scrollbar { display: none; }
+
+  .screen-result.error {
+    color: #ff8b6b;
+    text-shadow: 0 0 10px rgba(255,139,107,0.55);
+    font-size: 20px;
+  }
+
+  .keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+
+  button {
+    border: none;
+    font-family: var(--font-ui);
+    font-size: 17px;
+    font-weight: 600;
+    padding: 16px 0;
+    border-radius: 10px;
+    cursor: pointer;
+    color: var(--key-num-text);
+    background: linear-gradient(180deg, var(--key-num-hi), var(--key-num));
+    box-shadow:
+      0 3px 0 rgba(0,0,0,0.45),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    transition: transform 0.05s ease, box-shadow 0.05s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  button:active {
+    transform: translateY(2px);
+    box-shadow:
+      0 1px 0 rgba(0,0,0,0.45),
+      inset 0 1px 0 rgba(255,255,255,0.05);
+  }
+
+  button:focus-visible {
+    outline: 2px solid var(--display-glow);
+    outline-offset: 2px;
+  }
+
+  .key-func {
+    background: linear-gradient(180deg, var(--key-func-hi), var(--key-func));
+    color: var(--key-func-text);
+    font-size: 15px;
+  }
+
+  .key-op {
+    background: linear-gradient(180deg, var(--key-op-hi), var(--key-op));
+    color: var(--key-op-text);
+    font-size: 19px;
+  }
+
+  .key-equals {
+    background: linear-gradient(180deg, var(--key-equals-hi), var(--key-equals));
+    color: var(--key-op-text);
+    grid-row: span 2;
+    font-size: 20px;
+  }
+
+  .key-zero {
+    grid-column: span 2;
+  }
+
+  footer {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 11px;
+    color: #504b40;
+    letter-spacing: 0.04em;
+  }
+</style>
+</head>
+<body>
+
+<div class="machine">
+  <div class="brand-row">
+    <span class="brand">desk<span>calc</span></span>
+    <span class="model">MODEL DC-4</span>
+  </div>
+
+  <div class="screen-housing">
+    <div class="screen">
+      <div class="screen-expression" id="expression" aria-live="polite"></div>
+      <div class="screen-result" id="result" aria-live="polite">0</div>
+    </div>
+  </div>
+
+  <div class="keys">
+    <button class="key-func" data-action="clear">C</button>
+    <button class="key-func" data-action="backspace">⌫</button>
+    <button class="key-func" data-action="percent">%</button>
+    <button class="key-op" data-action="operator" data-op="÷">÷</button>
+
+    <button data-action="digit" data-digit="7">7</button>
+    <button data-action="digit" data-digit="8">8</button>
+    <button data-action="digit" data-digit="9">9</button>
+    <button class="key-op" data-action="operator" data-op="×">×</button>
+
+    <button data-action="digit" data-digit="4">4</button>
+    <button data-action="digit" data-digit="5">5</button>
+    <button data-action="digit" data-digit="6">6</button>
+    <button class="key-op" data-action="operator" data-op="−">−</button>
+
+    <button data-action="digit" data-digit="1">1</button>
+    <button data-action="digit" data-digit="2">2</button>
+    <button data-action="digit" data-digit="3">3</button>
+    <button class="key-op" data-action="operator" data-op="+">+</button>
+
+    <button class="key-zero" data-action="digit" data-digit="0">0</button>
+    <button data-action="decimal">.</button>
+    <button class="key-equals" data-action="equals">=</button>
+  </div>
+
+  <footer>Made for the OIBSIP Web Dev · Level 2 · Task 1</footer>
+</div>
+
+<script>
+(function () {
+  const expressionEl = document.getElementById('expression');
+  const resultEl = document.getElementById('result');
+
+  const keys = document.querySelectorAll('button[data-action]');
+
+  const state = {
+    previousValue: null,   // number, the accumulated running total
+    currentValue: '0',     // string, what's currently being typed / shown
+    operator: null,        // '+', '−', '×', '÷'
+    waitingForOperand: false, // true right after an operator or equals was pressed
+    isError: false,
+    lastExpressionPart: '' // for display of the "5 + 3" trail above the live number
+  };
+
+  function formatNumber(num) {
+    if (!isFinite(num)) return 'Error';
+    // Avoid ugly floating point tails like 0.1 + 0.2
+    const rounded = Math.round((num + Number.EPSILON) * 1e10) / 1e10;
+    return rounded.toString();
+  }
+
+  function render() {
+    expressionEl.textContent = state.lastExpressionPart;
+    resultEl.classList.toggle('error', state.isError);
+    resultEl.textContent = state.isError ? 'Cannot divide by 0' : state.currentValue;
+  }
+
+  function resetAll() {
+    state.previousValue = null;
+    state.currentValue = '0';
+    state.operator = null;
+    state.waitingForOperand = false;
+    state.isError = false;
+    state.lastExpressionPart = '';
+    render();
+  }
+
+  function inputDigit(digit) {
+    if (state.isError) resetAll();
+    if (state.waitingForOperand) {
+      state.currentValue = digit;
+      state.waitingForOperand = false;
+    } else {
+      state.currentValue = state.currentValue === '0' ? digit : state.currentValue + digit;
+    }
+    render();
+  }
+
+  function inputDecimal() {
+    if (state.isError) resetAll();
+    if (state.waitingForOperand) {
+      state.currentValue = '0.';
+      state.waitingForOperand = false;
+      render();
+      return;
+    }
+    if (!state.currentValue.includes('.')) {
+      state.currentValue += '.';
+    }
+    render();
+  }
+
+  function applyOperator(a, op, b) {
+    switch (op) {
+      case '+': return a + b;
+      case '−': return a - b;
+      case '×': return a * b;
+      case '÷':
+        if (b === 0) return null; // signal divide-by-zero
+        return a / b;
+      default: return b;
+    }
+  }
+
+  function handleOperator(nextOp) {
+    if (state.isError) return;
+    const inputValue = parseFloat(state.currentValue);
+
+    if (state.operator && state.waitingForOperand) {
+      // user changed their mind about the operator right after pressing one
+      state.operator = nextOp;
+      state.lastExpressionPart = `${formatNumber(state.previousValue)} ${nextOp}`;
+      render();
+      return;
+    }
+
+    if (state.previousValue === null) {
+      state.previousValue = inputValue;
+    } else if (state.operator) {
+      const outcome = applyOperator(state.previousValue, state.operator, inputValue);
+      if (outcome === null) {
+        state.isError = true;
+        state.waitingForOperand = true;
+        state.operator = null;
+        state.previousValue = null;
+        render();
+        return;
+      }
+      state.previousValue = outcome;
+      state.currentValue = formatNumber(outcome);
+    }
+
+    state.operator = nextOp;
+    state.waitingForOperand = true;
+    state.lastExpressionPart = `${formatNumber(state.previousValue)} ${nextOp}`;
+    render();
+  }
+
+  function handleEquals() {
+    if (state.isError) return;
+    if (state.operator === null || state.previousValue === null) return;
+
+    const inputValue = parseFloat(state.currentValue);
+    const outcome = applyOperator(state.previousValue, state.operator, inputValue);
+
+    if (outcome === null) {
+      state.isError = true;
+      state.previousValue = null;
+      state.operator = null;
+      state.waitingForOperand = true;
+      render();
+      return;
+    }
+
+    state.lastExpressionPart = `${formatNumber(state.previousValue)} ${state.operator} ${formatNumber(inputValue)} =`;
+    state.currentValue = formatNumber(outcome);
+    state.previousValue = null;
+    state.operator = null;
+    state.waitingForOperand = true;
+    render();
+  }
+
+  function handlePercent() {
+    if (state.isError) resetAll();
+    const inputValue = parseFloat(state.currentValue);
+    state.currentValue = formatNumber(inputValue / 100);
+    render();
+  }
+
+  function handleBackspace() {
+    if (state.isError) {
+      resetAll();
+      return;
+    }
+    if (state.waitingForOperand) return;
+    if (state.currentValue.length <= 1 || (state.currentValue.length === 2 && state.currentValue.startsWith('-'))) {
+      state.currentValue = '0';
+    } else {
+      state.currentValue = state.currentValue.slice(0, -1);
+    }
+    render();
+  }
+
+  keys.forEach((key) => {
+    key.addEventListener('click', () => {
+      const action = key.dataset.action;
+      switch (action) {
+        case 'digit':
+          inputDigit(key.dataset.digit);
+          break;
+        case 'decimal':
+          inputDecimal();
+          break;
+        case 'operator':
+          handleOperator(key.dataset.op);
+          break;
+        case 'equals':
+          handleEquals();
+          break;
+        case 'clear':
+          resetAll();
+          break;
+        case 'backspace':
+          handleBackspace();
+          break;
+        case 'percent':
+          handlePercent();
+          break;
+      }
+    });
+  });
+
+  // Optional but handy: basic keyboard support layered on top of the same handlers
+  window.addEventListener('keydown', (e) => {
+    if (e.key >= '0' && e.key <= '9') inputDigit(e.key);
+    else if (e.key === '.') inputDecimal();
+    else if (e.key === '+') handleOperator('+');
+    else if (e.key === '-') handleOperator('−');
+    else if (e.key === '*') handleOperator('×');
+    else if (e.key === '/') { e.preventDefault(); handleOperator('÷'); }
+    else if (e.key === 'Enter' || e.key === '=') handleEquals();
+    else if (e.key === 'Backspace') handleBackspace();
+    else if (e.key === 'Escape') resetAll();
+  });
+
+  render();
+})();
+</script>
+
+</body>
+</html>
