@@ -37,18 +37,13 @@ I left a labeled placeholder box in the hero section instead of hotlinking
 an image, since the task asks us to source our own. The image I'd recommend
 using is the official NASA portrait on Wikimedia Commons, titled
 "Kalpana Chawla, NASA photo portrait in orange suit.jpg" — it's a work of
-the U.S. federal government, so it's in the public domain. To finish this:
-1. Download that image from Wikimedia Commons
-2. Save it as images/kalpana-chawla.jpg inside this folder
-3. In index.html, replace the placeholder <div class="portrait-placeholder">
-   block with an <img src="images/kalpana-chawla.jpg" alt="Kalpana Chawla">
-   tag
+the U.S. federal government, so it's in the public domain.
 
 File Structure
 OIBSIP/WebDev-L2-TributePage/
 - index.html       
 - README.md          
-- images/            
+- kalpana_Chawla image          
 
 
 Self-Sourcing Note
