@@ -2,6 +2,8 @@ OIBSIP/WebDev-L2-Calculator
 
 - Desk Calculator — Web Development & Designing, Level 2, Task 1
 
+- 🔗 Live Demo: https://jiya795.github.io/OIBSIP/WebDev-L2-Calculator/
+
 - Objective
 
 A fully functional, browser-based calculator that performs basic arithmetic
