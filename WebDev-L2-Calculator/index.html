@@ -267,11 +267,11 @@
 
   const state = {
     previousValue: null,   
-    currentValue: '0',    
+    currentValue: '0',     
     operator: null,        
     waitingForOperand: false, 
     isError: false,
-    lastExpressionPart: ''
+    lastExpressionPart: '' 
   };
 
   function formatNumber(num) {
@@ -302,6 +302,10 @@
     if (state.waitingForOperand) {
       state.currentValue = digit;
       state.waitingForOperand = false;
+      if (state.operator === null) {
+        
+        state.lastExpressionPart = '';
+      }
     } else {
       state.currentValue = state.currentValue === '0' ? digit : state.currentValue + digit;
     }
@@ -313,6 +317,9 @@
     if (state.waitingForOperand) {
       state.currentValue = '0.';
       state.waitingForOperand = false;
+      if (state.operator === null) {
+        state.lastExpressionPart = '';
+      }
       render();
       return;
     }
@@ -325,8 +332,8 @@
   function applyOperator(a, op, b) {
     switch (op) {
       case '+': return a + b;
-      case '-': return a - b;
-      case 'x': return a * b;
+      case '−': return a - b;
+      case '×': return a * b;
       case '÷':
         if (b === 0) return null; 
         return a / b;
