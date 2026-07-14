@@ -2,7 +2,7 @@ OIBSIP/WebDev-L2-TributePage
 
 Kalpana Chawla — A Tribute Page — Web Development & Designing, Level 2, Task 2
 
-https://jiya795.github.io/OIBSIP/WebDev-L2-TributePage/
+🔗 Live Demo: https://jiya795.github.io/OIBSIP/WebDev-L2-TributePage/
 
 About This Project
 My submission for Task 2 of Level 2 in the Web Development track — a tribute
