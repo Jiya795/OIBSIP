@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard — SecureVault</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="auth-wrap dash-wrap">
+  <div class="brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="10" width="16" height="11" rx="2" stroke="#2dd4bf" stroke-width="1.8"/>
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="12" cy="15" r="1.6" fill="#2dd4bf"/>
+    </svg>
+    <span>Secure<span class="accent">Vault</span></span>
+  </div>
+
+  <div class="dash-card">
+    <div class="dash-header">
+      <div>
+        <h1 id="welcomeHeading">Welcome back</h1>
+        <p>You're viewing a protected page — this only loads for logged-in users.</p>
+      </div>
+      <button class="btn-logout" id="logoutBtn">Log out</button>
+    </div>
+
+    <div class="status-grid">
+      <div class="status-tile">
+        <div class="label">Logged in as</div>
+        <div class="value" id="statUsername">—</div>
+      </div>
+      <div class="status-tile">
+        <div class="label">Session status</div>
+        <div class="value" id="statSession">Active</div>
+      </div>
+      <div class="status-tile">
+        <div class="label">Total registered accounts</div>
+        <div class="value" id="statUserCount">—</div>
+      </div>
+      <div class="status-tile">
+        <div class="label">Password storage</div>
+        <div class="value">SHA-256 hashed</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>Made for the OIBSIP Web Dev · Level 2 · Task 4</footer>
+</div>
+
+<script src="auth.js"></script>
+<script>
+
+  requireAuth();
+
+  const username = getSession();
+  document.getElementById('welcomeHeading').textContent = `Welcome, ${username}`;
+  document.getElementById('statUsername').textContent = username;
+  document.getElementById('statUserCount').textContent = getUsers().length;
+
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    clearSession();
+    window.location.href = 'login.html';
+  });
+</script>
+
+</body>
+</html>

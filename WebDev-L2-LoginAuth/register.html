@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — SecureVault</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="auth-wrap">
+  <div class="brand">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="10" width="16" height="11" rx="2" stroke="#2dd4bf" stroke-width="1.8"/>
+      <path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#2dd4bf" stroke-width="1.8" stroke-linecap="round"/>
+      <circle cx="12" cy="15" r="1.6" fill="#2dd4bf"/>
+    </svg>
+    <span>Secure<span class="accent">Vault</span></span>
+  </div>
+
+  <div class="card">
+    <h1>Create an account</h1>
+    <p class="sub">Register to get access to your protected dashboard.</p>
+
+    <div class="alert error" id="formAlert"></div>
+
+    <form id="registerForm" novalidate>
+      <div class="field" id="usernameField">
+        <label for="username">Username or email</label>
+        <input type="text" id="username" autocomplete="username" placeholder="e.g. jiya_gupta">
+        <div class="field-error"></div>
+      </div>
+
+      <div class="field" id="passwordField">
+        <label for="password">Password</label>
+        <input type="password" id="password" autocomplete="new-password" placeholder="At least 8 characters, 1 number">
+        <div class="hint">Minimum 8 characters, and at least one number.</div>
+        <div class="field-error"></div>
+      </div>
+
+      <div class="field" id="confirmField">
+        <label for="confirmPassword">Confirm password</label>
+        <input type="password" id="confirmPassword" autocomplete="new-password" placeholder="Re-enter your password">
+        <div class="field-error"></div>
+      </div>
+
+      <button type="submit" class="btn-primary">Register</button>
+    </form>
+
+    <p class="switch-link">Already have an account? <a href="login.html">Log in</a></p>
+  </div>
+
+  <footer>Made for the OIBSIP Web Dev · Level 2 · Task 4</footer>
+</div>
+
+<script src="auth.js"></script>
+<script>
+  redirectIfLoggedIn();
+
+  const form = document.getElementById('registerForm');
+  const usernameField = document.getElementById('usernameField');
+  const passwordField = document.getElementById('passwordField');
+  const confirmField = document.getElementById('confirmField');
+  const formAlert = document.getElementById('formAlert');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAlert(formAlert);
+    [usernameField, passwordField, confirmField].forEach(clearFieldError);
+
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+
+    let hasError = false;
+
+    const usernameCheck = validateUsername(username);
+    if (!usernameCheck.valid) {
+      showFieldError(usernameField, usernameCheck.message);
+      hasError = true;
+    }
+
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+      showFieldError(passwordField, passwordCheck.message);
+      hasError = true;
+    }
+
+    if (!hasError && password !== confirmPassword) {
+      showFieldError(confirmField, 'Passwords do not match.');
+      hasError = true;
+    }
+
+    if (hasError) return;
+
+    if (findUser(username)) {
+      showAlert(formAlert, 'An account with that username or email already exists.', 'error');
+      return;
+    }
+
+    const passwordHash = await hashPassword(password);
+    const users = getUsers();
+    users.push({ username: username.trim(), passwordHash });
+    saveUsers(users);
+
+    showAlert(formAlert, 'Account created! Redirecting you to log in…', 'success');
+    setTimeout(() => { window.location.href = 'login.html'; }, 1100);
+  });
+</script>
+
+</body>
+</html>
