@@ -43,12 +43,7 @@ File Structure
 OIBSIP/WebDev-L2-ToDoApp/
 - index.html        (structure, styling, and logic, single-file build)
 - README.md          (this file)
-- screenshots/         (add screenshots of the working app here)
 
-How to Run
-1. Open index.html in any browser — no build step or server required.
-2. Tasks you add will be saved in that browser's localStorage, so they'll
-   still be there next time you open the file in the same browser.
 
 Self-Sourcing Note
 Referred to general JavaScript to-do list tutorials for the core
